@@ -34,7 +34,8 @@ public class Application {
 
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
-    public static  final void run(){
+    @SuppressWarnings("CallToPrintStackTrace")
+    public static void run(){
         try {
             String className = Thread.currentThread().getStackTrace()[1].getClassName();
             SpringApplication.run(Class.forName(className));

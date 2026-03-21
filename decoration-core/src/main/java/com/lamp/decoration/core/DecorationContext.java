@@ -9,8 +9,11 @@
  *MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *See the Mulan PubL v2 for more details.
  */
+
 package com.lamp.decoration.core;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.lamp.decoration.core.databases.queryClauseInte.QueryClause;
 import com.lamp.decoration.core.result.ResultObject;
 
@@ -19,16 +22,15 @@ import com.lamp.decoration.core.result.ResultObject;
  */
 public class DecorationContext {
 
-    private static final ThreadLocal<DecorationContext> THREAD_LOCAL = new ThreadLocal() {
+    private static final ThreadLocal<DecorationContext> THREAD_LOCAL = ThreadLocal.withInitial(DecorationContext::new);
 
-        protected DecorationContext initialValue() {
-            return new DecorationContext();
-        }
-    };
     private ResultObject<String> resultObject;
+
     private QueryClause queryClause;
 
     private String queryClauseKey;
+
+    private Page<?> page;
 
     public static DecorationContext get() {
         return THREAD_LOCAL.get();
@@ -36,6 +38,17 @@ public class DecorationContext {
 
     public ResultObject<String> getResultObject() {
         return resultObject;
+    }
+
+    public void temporarilyPage() {
+        this.page = PageHelper.getLocalPage();
+        PageHelper.clearPage();
+    }
+
+    public void executePage() {
+        Page<?> page = this.page;
+        this.page = null;
+        PageHelper.offsetPage(page.getPageNum(), page.getPageSize()).setOrderBy(page.getOrderBy());
     }
 
     public void setResultObject(ResultObject<String> resultObject) {
@@ -56,11 +69,11 @@ public class DecorationContext {
         this.queryClause = queryClause;
     }
 
-    public void setQueryClauseKey(String queryClauseKey ){
+    public void setQueryClauseKey(String queryClauseKey) {
         this.queryClauseKey = queryClauseKey;
     }
 
-    public String getQueryClauseKey(){
+    public String getQueryClauseKey() {
         return this.queryClauseKey;
     }
 }

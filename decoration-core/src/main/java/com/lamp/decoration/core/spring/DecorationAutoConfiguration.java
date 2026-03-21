@@ -12,6 +12,9 @@
 
 package com.lamp.decoration.core.spring;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,7 @@ import com.lamp.decoration.core.exception.ExceptionResult;
 import com.lamp.decoration.core.result.DecorationResultAction;
 import com.lamp.decoration.core.result.ResultAction;
 import com.lamp.decoration.core.result.ResultConfig;
+import com.lamp.decoration.core.result.ResultObject;
 import com.lamp.decoration.core.spring.plugs.DecorationCorsRegistry;
 import com.lamp.decoration.core.spring.plugs.FastJsonMessageConverters;
 import com.lamp.decoration.core.spring.plugs.Swagger2Plugs;
@@ -56,10 +60,13 @@ import com.lamp.decoration.core.utils.SpringVersionRecognition;
 @EnableConfigurationProperties(DecorationProperties.class)
 public class DecorationAutoConfiguration {
 
+    private static final Log logger = LogFactory.getLog(DecorationAutoConfiguration.class);
+
+
     @Autowired
     private BeanFactory beanFactory;
 
-    private final ResultAction resultAction = new DecorationResultAction();
+    private final ResultAction<ResultObject<Object>> resultAction = new DecorationResultAction();
 
     /**
      * 对返回结果进行拦截
@@ -137,6 +144,7 @@ public class DecorationAutoConfiguration {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 try {
+
                     String className = SpringVersionRecognition.isJakarta() ?
                         "com.lamp.decoration.core.databases.queryClauseInte.JakartaQueryClauseInterceptor" :
                         "com.lamp.decoration.core.databases.queryClauseInte.QueryClauseInterceptor";
@@ -206,7 +214,6 @@ public class DecorationAutoConfiguration {
         return clazz.getConstructor(ResultAction.class).newInstance(this.resultAction);
     }
 
-
     @Bean
     public FastJsonMessageConverters createFastJsonMessageConverters() {
         return new FastJsonMessageConverters();
@@ -215,7 +222,6 @@ public class DecorationAutoConfiguration {
     /**
      * 暂时没有实现
      *
-     * @return
      */
     @Bean
     @ConditionalOnClass(name = {"feign.RequestInterceptor"})

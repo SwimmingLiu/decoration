@@ -22,16 +22,16 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * @author laohu
  */
-public class ValidEnumValidator implements ConstraintValidator<ValidEnumRange, Object> {
+public class ValidEnumValidator implements ConstraintValidator<EnumValidRange, Object> {
 
-    private ValidEnumRange range;
+    private EnumValidRange range;
 
     private Set<Object> valueSet;
 
     private boolean contains;
 
     @Override
-    public void initialize(ValidEnumRange constraintAnnotation) {
+    public void initialize(EnumValidRange constraintAnnotation) {
         this.range = constraintAnnotation;
         this.contains = constraintAnnotation.contains();
     }

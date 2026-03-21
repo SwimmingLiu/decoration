@@ -98,7 +98,6 @@ public class ResultObject<T> {
         AdaptationPageService.getInstance().adaptation((ResultObject<Object>) this, data);
     }
 
-    @SuppressWarnings("unchecked")
 	public ResultObject(Integer code, String message, T data, String errorMessages, Integer currentPage,
         Integer pageSize, Long total) {
         if (code == null) {

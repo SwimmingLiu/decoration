@@ -62,8 +62,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.7.0</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                    <!--    <source>1.8</source>
+                        <target>1.8</target>-->
                         <encoding>UTF-8</encoding>
                         <testIncludes>
                             <testInclude>none</testInclude>
@@ -101,22 +101,11 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.20.1</version>
                     <configuration>
-                        <argLine>-Xmx512m -XX:PermSize=128m
-                            -XX:MaxPermSize=128m
-                        </argLine>
                         <testFailureIgnore>true</testFailureIgnore>
                         <includes>
                             <include>**/*Test*.java</include>
                         </includes>
                         <excludes/>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
-                    <configuration>
-                        <executable>true</executable>
                     </configuration>
                 </plugin>
             </plugins>

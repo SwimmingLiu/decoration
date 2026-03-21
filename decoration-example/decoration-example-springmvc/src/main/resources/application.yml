@@ -13,20 +13,5 @@ decoration:
   constantConfig:
     all: true
 
-#decoration:
-#  enable: true
-#  corsEnable: trueApplicationConfig
-#  swagger2Config:
-#    swagger2Enable: false
-#    apiSelector:
-#      paths:
-#        - cn.lampup.decoration.example.springmvc
-#    apiInfo:
-#      title: 1111
-#      description: 2222
-#      termsOfServiceUrl: 3333
-#      contact:
-#        name: laohu
-#      license: aaaaaa
-#      version: 1.0.1
+
 

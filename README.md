@@ -255,7 +255,7 @@ public void overbooking(Map<String, String> parameter){
 ## 单元测试
 
 1. mvc单元测试
-2. 持久层单元测试
+2. 持久层单元测试,轻量级 Mybatis 测试
 
 ## spring 简单依赖
 

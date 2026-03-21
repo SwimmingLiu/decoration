@@ -49,7 +49,7 @@ public abstract class AbstractDuplicateCheck implements DuplicateCheck {
             String type = servletRequestAttributes.getRequest().getHeader("content-type");
             try {
                 InputStream inputStream = servletRequestAttributes.getRequest().getInputStream();
-                int length = Integer.valueOf(servletRequestAttributes.getRequest().getHeader("content-length"));
+                int length = Integer.parseInt(servletRequestAttributes.getRequest().getHeader("content-length"));
                 byte[] body = new byte[length];
                 inputStream.read(body);
                 JSONObject jsonObject = null;
@@ -70,9 +70,9 @@ public abstract class AbstractDuplicateCheck implements DuplicateCheck {
 
         } else if(Objects.equals(duplicateSubmissionData.getDuplicateType() , DuplicateIdentification.NETWORK_ADDRESS)) {
             String forwarded = servletRequestAttributes.getRequest().getHeader("x-forwarded-for");
-            if (Objects.isNull(forwarded)) {
+            if (Objects.nonNull(forwarded)) {
                 String[] ipArray = StringUtils.split(forwarded, ",");
-                if (ipArray.length > 0) {
+                if (ipArray != null && ipArray.length > 0) {
                     key = ipArray[0];
                 }
             }else {
