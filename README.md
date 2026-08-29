@@ -286,3 +286,8 @@ public void overbooking(Map<String, String> parameter){
 ## 内部文档
 ### 发布
 mvn clean deploy javadoc:javadoc -P release
+
+
+## spring boot 改动
+2.7之前使用 META-INF/spring.factories
+2.7之后 使用 META-INF/spring/*

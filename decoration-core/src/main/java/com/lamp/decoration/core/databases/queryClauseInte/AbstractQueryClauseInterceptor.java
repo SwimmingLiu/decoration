@@ -24,7 +24,7 @@ import com.lamp.decoration.core.utils.UtilsTool;
 
 public abstract class AbstractQueryClauseInterceptor {
 
-    private ConcurrentHashMap<Object, QueryLimitData> querylimitMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Object, QueryLimitData> querylimitMap = new ConcurrentHashMap<>();
 
     protected ConstantConfig constantConfig;
 

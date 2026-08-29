@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.lamp.decoration.core.ConstantConfig;
 import com.lamp.decoration.core.exception.ExceptionConfig;
+import com.lamp.decoration.core.mybatis.MybatisExpandConfig;
 import com.lamp.decoration.core.result.ResultConfig;
 
 /**
@@ -27,6 +28,8 @@ public class DecorationProperties {
     public static final String DECORATION_PREFIX = "decoration";
 
     private boolean enabled;
+
+    private MybatisExpandConfig mybatisExpandConfig = new MybatisExpandConfig();
 
     private ConstantConfig constantConfig = new ConstantConfig();
 
@@ -75,5 +78,13 @@ public class DecorationProperties {
 
     public void setPlugsConfig(PlugsConfig plugsConfig) {
         this.plugsConfig = plugsConfig;
+    }
+
+    public MybatisExpandConfig getMybatisExpandConfig() {
+        return mybatisExpandConfig;
+    }
+
+    public void setMybatisExpandConfig(MybatisExpandConfig mybatisExpandConfig) {
+        this.mybatisExpandConfig = mybatisExpandConfig;
     }
 }

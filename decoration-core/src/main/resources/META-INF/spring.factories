@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.lamp.decoration.core.spring.DecorationAutoConfiguration
+com.lamp.decoration.core.spring.DecorationAutoConfiguration,\
+com.lamp.decoration.core.spring.DecorationMybatisExpandAutoConfiguration

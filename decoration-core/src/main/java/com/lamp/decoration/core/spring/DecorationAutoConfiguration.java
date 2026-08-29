@@ -22,7 +22,6 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,14 +44,13 @@ import com.lamp.decoration.core.result.ResultConfig;
 import com.lamp.decoration.core.result.ResultObject;
 import com.lamp.decoration.core.spring.plugs.DecorationCorsRegistry;
 import com.lamp.decoration.core.spring.plugs.FastJsonMessageConverters;
-import com.lamp.decoration.core.spring.plugs.Swagger2Plugs;
-import com.lamp.decoration.core.spring.plugs.Swagger3Plugs;
 import com.lamp.decoration.core.utils.SpringVersionRecognition;
 
 /**
  * @author laohu
  */
 
+@SuppressWarnings("NullableProblems")
 @Configuration
 @ConditionalOnProperty(prefix = DecorationProperties.DECORATION_PREFIX, name = "enabled", matchIfMissing = true)
 @AutoConfigureBefore(name = {"org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration"})
@@ -68,14 +66,12 @@ public class DecorationAutoConfiguration {
 
     private final ResultAction<ResultObject<Object>> resultAction = new DecorationResultAction();
 
+
+
+
+
     /**
      * 对返回结果进行拦截
-     *
-     * @param decorationProperties
-     * @return 1
-     * @throws InstantiationException 3
-     * @throws IllegalAccessException 2
-     * @throws ClassNotFoundException 1
      */
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -123,9 +119,9 @@ public class DecorationAutoConfiguration {
                     DuplicateCheck duplicateCheck = new LocalDuplicateCheck();
                     Class<?> clazz;
                     if (SpringVersionRecognition.isJakarta()) {
-                        clazz = Class.forName("com.lamp.decoration.core.duplicate.JakartaDuplicateSubmissionHandlerInterceptor");
+                        clazz = Class.forName("com.lamp.decoration.servlet.jakarta.JakartaDuplicateSubmissionHandlerInterceptor");
                     } else {
-                        clazz = Class.forName("com.lamp.decoration.core.duplicate.DuplicateSubmissionHandlerInterceptor");
+                        clazz = Class.forName("com.lamp.decoration.servlet.javax.DuplicateSubmissionHandlerInterceptor");
                     }
                     HandlerInterceptor handlerInterceptor =
                         (HandlerInterceptor) clazz.getConstructor(DuplicateCheck.class).newInstance(duplicateCheck);
@@ -144,10 +140,9 @@ public class DecorationAutoConfiguration {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 try {
-
                     String className = SpringVersionRecognition.isJakarta() ?
-                        "com.lamp.decoration.core.databases.queryClauseInte.JakartaQueryClauseInterceptor" :
-                        "com.lamp.decoration.core.databases.queryClauseInte.QueryClauseInterceptor";
+                        "com.lamp.decoration.servlet.jakarta.JakartaQueryClauseInterceptor" :
+                        "com.lamp.decoration.servlet.javax.QueryClauseInterceptor";
                     Class<?> clazz = Class.forName(className);
                     HandlerInterceptor handlerInterceptor = (HandlerInterceptor) clazz.getConstructor().newInstance();
                     AbstractQueryClauseInterceptor abstractQueryClauseInterceptor = (AbstractQueryClauseInterceptor) handlerInterceptor;
@@ -159,23 +154,6 @@ public class DecorationAutoConfiguration {
             }
 
         };
-    }
-
-    @Bean
-    @ConditionalOnProperty(prefix = "decoration.swagger2", name = "enabled", havingValue = "true", matchIfMissing = false)
-    @ConditionalOnClass(name = "springfox.documentation.spring.web.plugins.Docket")
-    public Object createsSwagger2(DecorationProperties decorationProperties) {
-        List<String> packagesList = AutoConfigurationPackages.get(beanFactory);
-        decorationProperties.getPlugsConfig().getSwagger2().getApiSelector().getPaths().addAll(packagesList);
-        return Swagger2Plugs.getDocket(decorationProperties.getPlugsConfig().getSwagger2());
-    }
-
-    @Bean
-    @ConditionalOnProperty(prefix = "decoration.swagger3", name = "enabled", havingValue = "true", matchIfMissing = false)
-    @ConditionalOnClass(name = "io.swagger.v3.oas.models.OpenAPI")
-    public Object createsSwagger3(DecorationProperties decorationProperties) {
-        String filePath = "classpath:" + decorationProperties.getPlugsConfig().getSwagger3().getFilePath();
-        return Swagger3Plugs.createSwagger(filePath);
     }
 
 
@@ -208,8 +186,9 @@ public class DecorationAutoConfiguration {
         this.resultAction.setDefaultExceptionResult(exceptionResult.getDefaultExceptionResult());
         this.resultAction.setExceptionResultList(exceptionResultList);
 
-        String className = "com.lamp.decoration.core.exception." + (SpringVersionRecognition.isJakarta() ? "JakartaDecorationExceptionHandler"
-            : "DecorationExceptionHandler");
+        String className = SpringVersionRecognition.isJakarta() ?
+            "com.lamp.decoration.servlet.jakarta.JakartaDecorationExceptionHandler"
+            : "com.lamp.decoration.servlet.javax.DecorationExceptionHandler";
         Class<?> clazz = Class.forName(className);
         return clazz.getConstructor(ResultAction.class).newInstance(this.resultAction);
     }
@@ -219,18 +198,4 @@ public class DecorationAutoConfiguration {
         return new FastJsonMessageConverters();
     }
 
-    /**
-     * 暂时没有实现
-     *
-     */
-    @Bean
-    @ConditionalOnClass(name = {"feign.RequestInterceptor"})
-    public Object createRequestInterceptor() {
-        try {
-            Class<?> clazz = Class.forName("com.lamp.decoration.core.databases.queryClauseInte");
-            return clazz.newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            return null;
-        }
-    }
 }

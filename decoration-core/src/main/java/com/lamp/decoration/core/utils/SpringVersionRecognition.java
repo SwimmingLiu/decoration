@@ -9,6 +9,7 @@
  *MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *See the Mulan PubL v2 for more details.
  */
+
 package com.lamp.decoration.core.utils;
 
 import org.springframework.core.SpringVersion;
@@ -19,16 +20,19 @@ import org.springframework.util.StringUtils;
  */
 public class SpringVersionRecognition {
 
-    private static final boolean isJakarta = getJakarta();
+    private static final boolean IS_JAKARTA = getJakarta();
 
-    private static boolean getJakarta(){
+    private static boolean getJakarta() {
         String springVersion = SpringVersion.getVersion();
         String[] value = StringUtils.split(springVersion, ".");
-        Integer version = Integer.valueOf(value[0]);
+        int version = 0;
+        if (value != null) {
+            version = Integer.parseInt(value[0]);
+        }
         return version > 5;
     }
 
     public static boolean isJakarta() {
-        return isJakarta;
+        return IS_JAKARTA;
     }
 }

@@ -15,8 +15,6 @@ package com.lamp.decoration.core.spring;
 import java.util.List;
 
 import com.lamp.decoration.core.spring.plugs.DecorationCorsConfiguration;
-import com.lamp.decoration.core.spring.plugs.Swagger2Configuration;
-import com.lamp.decoration.core.spring.plugs.Swagger3Configuration;
 
 /**
  * 所有的插件配置写到这里
@@ -28,10 +26,6 @@ public class PlugsConfig {
     private boolean corsEnable = false;
 
     private List<DecorationCorsConfiguration> corsConfigurationList;
-
-    private Swagger2Configuration swagger2;
-
-    private Swagger3Configuration swagger3;
 
 
     public boolean isCorsEnable() {
@@ -50,19 +44,4 @@ public class PlugsConfig {
         this.corsConfigurationList = corsConfigurationList;
     }
 
-    public Swagger2Configuration getSwagger2() {
-        return swagger2;
-    }
-
-    public void setSwagger2(Swagger2Configuration swagger2) {
-        this.swagger2 = swagger2;
-    }
-
-    public Swagger3Configuration getSwagger3() {
-        return swagger3;
-    }
-
-    public void setSwagger3(Swagger3Configuration swagger3) {
-        this.swagger3 = swagger3;
-    }
 }

@@ -1,19 +1,23 @@
 package com.lamp.decoration.core.databases.mybatis;
 
-import static java.lang.reflect.Proxy.newProxyInstance;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Objects;
 
 import org.springframework.util.ReflectionUtils;
 
 /**
  * 用于解决 分页参数问题
+ * 用上下文解决了
+ * @author hahaha
+ *
  */
+@Deprecated
 public class DecorationSqlSessionProxy {
 
     private Class<?> sqlSessionTemplateClass;
@@ -34,7 +38,7 @@ public class DecorationSqlSessionProxy {
         }
         sqlSessionProxyField.setAccessible(true);
         this.sqlSessionProxy = sqlSessionProxyField.get(sqlSessionTemplate);
-        Object newSqlSessionProxy = newProxyInstance(SqlSessionFactory.class.getClassLoader(),
+        Object newSqlSessionProxy = Proxy.newProxyInstance(SqlSessionFactory.class.getClassLoader(),
             this.sqlSessionProxy.getClass().getInterfaces(), new SqlSessionInterceptor());
         sqlSessionProxyField.set(sqlSessionTemplate, newSqlSessionProxy);
         this.sqlSessionTemplate = sqlSessionTemplate;
@@ -44,7 +48,7 @@ public class DecorationSqlSessionProxy {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return  method.invoke(sqlSessionTemplate, args);
+            return method.invoke(sqlSessionTemplate, args);
         }
     }
 }

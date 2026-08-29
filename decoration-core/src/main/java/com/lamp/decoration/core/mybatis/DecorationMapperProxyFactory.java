@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+@Deprecated
 public class DecorationMapperProxyFactory<T> extends MapperProxyFactory<T> {
 
     public DecorationMapperProxyFactory(Class<T> mapperInterface) {

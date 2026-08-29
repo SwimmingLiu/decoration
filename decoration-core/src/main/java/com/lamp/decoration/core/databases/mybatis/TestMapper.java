@@ -26,10 +26,7 @@ import java.lang.annotation.Target;
 public @interface TestMapper {
 
 
-    /**
-     * @return
-     */
-    String[] dependent() default "";
+    Class<?>[] dependent() default {};
 
     /**
      * @return

@@ -9,6 +9,7 @@
  *MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *See the Mulan PubL v2 for more details.
  */
+
 package com.lamp.decoration.core.spring;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import com.lamp.decoration.core.result.ResultHandlerMethodReturnValueHandler;
 
 /**
  * 用于得到 RequestResponseBodyMethodProcessor， 并且代理 RequestResponseBodyMethodProcessor
+ *
  * @author hahaha
  */
 public class OperationSpringMVCBehavior implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
@@ -41,7 +43,9 @@ public class OperationSpringMVCBehavior implements ApplicationContextAware, Appl
 
     @Autowired
     private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+
     private ResultHandlerMethodReturnValueHandler resultHandlerMethodReturnValueHandler;
+
     private ResultAction<Object> resultAction;
 
     private ResultConfig resultConfig;
@@ -55,14 +59,14 @@ public class OperationSpringMVCBehavior implements ApplicationContextAware, Appl
     @PostConstruct
     public void init() {
         List<HandlerMethodReturnValueHandler> handlers = requestMappingHandlerAdapter.getReturnValueHandlers();
-        if(Objects.isNull(handlers)){
+        if (Objects.isNull(handlers)) {
             return;
         }
         List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>(handlers.size());
         for (HandlerMethodReturnValueHandler handlerMethodReturnValueHandler : handlers) {
             if (handlerMethodReturnValueHandler.getClass().equals(RequestResponseBodyMethodProcessor.class)) {
                 resultHandlerMethodReturnValueHandler =
-                        new ResultHandlerMethodReturnValueHandler(handlerMethodReturnValueHandler, resultConfig);
+                    new ResultHandlerMethodReturnValueHandler(handlerMethodReturnValueHandler, resultConfig);
                 resultHandlerMethodReturnValueHandler.setResultAction(resultAction);
                 handlerMethodReturnValueHandler = resultHandlerMethodReturnValueHandler;
             }
@@ -72,7 +76,8 @@ public class OperationSpringMVCBehavior implements ApplicationContextAware, Appl
     }
 
     /**
-     *  如果是 spring 内部 resultAction ， 需要等待 spring application 启动成功
+     * 如果是 spring 内部 resultAction ， 需要等待 spring application 启动成功
+     *
      * @param event the event to respond to
      */
     @SuppressWarnings("unchecked")

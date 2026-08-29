@@ -1,0 +1,58 @@
+spring:
+  datasource:
+    name: vaast
+    url: jdbc:mysql://127.0.0.1:3306/eventmesh_dashboard?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    username: root
+    password: Ab123123@
+    # using druid data source
+    type: com.alibaba.druid.pool.DruidDataSource
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+    # encrypt password
+    filters: config,stat,slf4j
+
+dubbo:
+  scan:
+    base-packages: com.allitetech.vaast.provider.service.impl
+  application:
+    name: decoration-example-servlet-provider
+    owner: dome
+    logger: slf4j
+
+  protocol:
+    name: dubbo
+    port: 22131
+    accesslog: true
+
+  registry:
+    address: N/A
+    register: true
+    subscribe: true
+
+decoration:
+  enabled: true
+  mybatisExpandConfig:
+    enabled: true
+
+mybatis:
+  mapperLocations: "classpath:mapper/*Mapper.xml"
+  checkConfig-location : false
+  configuration:
+    useGeneratedKeys: true
+    mapUnderscoreToCamelCase: true
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

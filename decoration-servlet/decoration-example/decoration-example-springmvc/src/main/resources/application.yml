@@ -1,0 +1,27 @@
+server:
+  port: 8083
+  servlet:
+    context-path: "/decoration/example/springmvc/"
+
+
+dubbo:
+  application:
+    name: decoration-example-springmvc3
+    owner: dome
+
+  provider:
+    timeout: 30000
+    retries: 0
+
+  registry:
+    address: N/A
+    register: false
+    subscribe: true
+
+decoration:
+  enabled: true
+  constantConfig:
+    all: true
+
+
+

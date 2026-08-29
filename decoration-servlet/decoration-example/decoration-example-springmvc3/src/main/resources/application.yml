@@ -1,0 +1,46 @@
+server:
+  port: 8083
+  servlet:
+    context-path: "/decoration/example/springmvc3/"
+
+dubbo:
+  application:
+    name: decoration-example-consumer
+    owner: dome
+    qos-port: 33333
+
+  provider:
+    timeout: 30000
+    retries: 0
+
+  registry:
+    address: N/A
+    register: false
+    subscribe: true
+
+
+decoration:
+  enabled: true
+  plugsConfig:
+    corsEnable: false
+  mybatisExpandConfig:
+    enabled: false
+
+
+#decoration:
+#  enable: true
+#  corsEnable: true
+#  swagger2Config:
+#    swagger2Enable: false
+#    apiSelector:
+#      paths:
+#        - cn.lampup.decoration.example.springmvc
+#    apiInfo:
+#      title: 1111
+#      description: 2222
+#      termsOfServiceUrl: 3333
+#      contact:
+#        name: laohu
+#      license: aaaaaa
+#      version: 1.0.1
+

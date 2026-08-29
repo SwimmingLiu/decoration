@@ -1,1 +1,2 @@
 com.lamp.decoration.core.spring.DecorationAutoConfiguration
+com.lamp.decoration.core.spring.DecorationMybatisExpandAutoConfiguration

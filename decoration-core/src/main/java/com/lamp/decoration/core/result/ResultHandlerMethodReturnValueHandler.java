@@ -12,6 +12,8 @@
 
 package com.lamp.decoration.core.result;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,46 +21,47 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.DispatcherServletWebRequest;
 
 import com.lamp.decoration.core.DecorationContext;
 import com.lamp.decoration.core.result.third.WangeditorResultObject;
 
+import lombok.Setter;
+
 /**
  * @author laohu
  */
 public class ResultHandlerMethodReturnValueHandler
-    implements HandlerMethodReturnValueHandler, HandlerExceptionResolver {
+    implements HandlerMethodReturnValueHandler {
 
     private final static Logger log = LoggerFactory.getLogger(ResultHandlerMethodReturnValueHandler.class);
 
-    private final Map<Class<?>, Method> enumInMethodMap = new ConcurrentHashMap<>();
 
     private final HandlerMethodReturnValueHandler handlerMethodReturnValueHandler;
-
+    private final ResultConfig resultConfig;
+    private final Set<Class<?>> clazzSet = new HashSet<>();
+    private final Map<Method, Boolean> methodMap = new ConcurrentHashMap<>();
+    private final boolean printUrl;
+    private final boolean printClasses;
+    private final boolean excludeUrl;
+    private final boolean excludeClasses;
+    @Setter
     private ResultAction<Object> resultAction;
-
-    private ResultConfig resultConfig;
-
-    private Set<Class<?>> clazzSet = new HashSet<>();
-
-    private Map<Method, Boolean> methodMap = new ConcurrentHashMap<>();
 
     public ResultHandlerMethodReturnValueHandler(HandlerMethodReturnValueHandler handlerMethodReturnValueHandler, ResultConfig resultConfig) {
         this.handlerMethodReturnValueHandler = handlerMethodReturnValueHandler;
         this.resultConfig = resultConfig;
         this.resultAction = resultConfig.getInjection();
+        this.printUrl = CollectionUtils.isNotEmpty(resultConfig.getPrintUrl());
+        this.printClasses = CollectionUtils.isNotEmpty(resultConfig.getPrintClasses());
+        this.excludeUrl = CollectionUtils.isNotEmpty(resultConfig.getExcludeUrl());
+        this.excludeClasses = CollectionUtils.isNotEmpty(resultConfig.getExcludeClasses());
         resultConfig.getResultExclude().forEach(t -> {
             try {
                 this.clazzSet.add(Class.forName(t));
@@ -70,22 +73,7 @@ public class ResultHandlerMethodReturnValueHandler
         this.init();
     }
 
-
-    private void init() {
-        this.clazzSet.add(WangeditorResultObject.class);
-    }
-
-    @Override
-    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
-        NativeWebRequest webRequest) throws Exception {
-        // 从returnType ，获得类型返类型
-        Object object = this.clazzSet.contains(returnType.getParameterType()) ? returnValue
-            : this.actionResult(returnValue, returnType, mavContainer, webRequest);
-        this.printReturn(object, returnType, mavContainer, webRequest);
-        // 封装成返回对象
-        handlerMethodReturnValueHandler.handleReturnValue(object, returnType, mavContainer, webRequest);
-    }
-
+    @SuppressWarnings("unchecked")
     public Object actionResult(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest) {
         DecorationContext decorationContext = DecorationContext.get();
@@ -115,6 +103,28 @@ public class ResultHandlerMethodReturnValueHandler
         return resultAction.objectResult(returnValue);
     }
 
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) {
+        return handlerMethodReturnValueHandler.supportsReturnType(returnType);
+    }
+
+    @SuppressWarnings("NullableProblems")
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
+        NativeWebRequest webRequest) throws Exception {
+        // 从returnType ，获得类型返类型
+        Object object = this.clazzSet.contains(returnType.getParameterType()) ? returnValue
+            : this.actionResult(returnValue, returnType, mavContainer, webRequest);
+        this.printReturn(object, returnType, mavContainer, webRequest);
+        // 封装成返回对象
+        handlerMethodReturnValueHandler.handleReturnValue(object, returnType, mavContainer, webRequest);
+    }
+
+    private void init() {
+        this.clazzSet.add(WangeditorResultObject.class);
+    }
+
     private void printReturn(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest) {
         if (this.isPrint(webRequest, returnType)) {
@@ -132,48 +142,33 @@ public class ResultHandlerMethodReturnValueHandler
     }
 
     private boolean doIsPrint(NativeWebRequest webRequest, MethodParameter returnType) {
-        if (!this.resultConfig.getPrintUrl().isEmpty()) {
+        if (this.printUrl) {
             DispatcherServletWebRequest request = (DispatcherServletWebRequest) webRequest;
             String uri = request.getRequest().getRequestURI();
             if (this.resultConfig.getPrintUrl().contains(uri)) {
                 return true;
             }
         }
-        if (!this.resultConfig.getPrintClasses().isEmpty()) {
+        if (this.printClasses) {
             String className = Objects.requireNonNull(returnType.getMethod()).getDeclaringClass().getName();
             if (this.resultConfig.getPrintClasses().contains(className)) {
                 return true;
             }
         }
-        if (!this.resultConfig.getExcludeUrl().isEmpty()) {
+        if (this.excludeUrl) {
             DispatcherServletWebRequest request = (DispatcherServletWebRequest) webRequest;
             String uri = request.getRequest().getRequestURI();
             if (this.resultConfig.getExcludeUrl().contains(uri)) {
                 return false;
             }
         }
-        if (!this.resultConfig.getExcludeClasses().isEmpty()) {
+        if (this.excludeClasses) {
             String className = Objects.requireNonNull(returnType.getMethod()).getDeclaringClass().getName();
             if (this.resultConfig.getExcludeClasses().contains(className)) {
                 return false;
             }
         }
         return this.resultConfig.isPrintResults();
-    }
-
-    @Override
-    public boolean supportsReturnType(MethodParameter returnType) {
-        return handlerMethodReturnValueHandler.supportsReturnType(returnType);
-    }
-
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
-        Exception ex) {
-        return null;
-    }
-
-    public void setResultAction(ResultAction<Object> resultAction) {
-        this.resultAction = resultAction;
     }
 
 }
