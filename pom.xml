@@ -43,6 +43,10 @@
     <modules>
         <module>decoration-core</module>
         <module>decoration-servlet</module>
+        <module>foundation/foundation-api</module>
+        <module>foundation/foundation-base</module>
+        <module>foundation/foundation-network</module>
+        <module>foundation/foundation-gentle</module>
         <module>foundation</module>
     </modules>
     <dependencyManagement>
