@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.lampup</groupId>
+        <artifactId>foundation-parent</artifactId>
+        <version>0.1.20</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>foundation</artifactId>
+    <name>foundation</name>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.lampup</groupId>
+            <artifactId>foundation-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.lampup</groupId>
+            <artifactId>foundation-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.lampup</groupId>
+            <artifactId>foundation-network</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.lampup</groupId>
+            <artifactId>foundation-gentle</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>
